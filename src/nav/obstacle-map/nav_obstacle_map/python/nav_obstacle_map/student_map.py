@@ -35,14 +35,15 @@ def project_cloud(points: np.ndarray, spec: GridSpec) -> np.ndarray:
     每帧从零重建，不累积历史、不做衰减或射线遮挡推理。
     """
     grid = np.zeros((spec.height, spec.width), dtype = np.uint8)
-    points = np.asarray(points, dtype = np.float64).reshape(-1, 3)
+    pts = np.asarray(points, dtype = np.float64).reshape(-1, 3)
 
-    points = points[np.isfinite(points).all(axis = 1)]
-    z = points[:, 2]
-    points = points[(z >= spec.z_min) & (z <= spec.z_max)]
+    pts = pts[np.isfinite(pts).all(axis = 1)]
 
-    ix = np.floor((points[:, 0] - spec.origin_x) / spec.resolution).astype(np.int64)
-    iy = np.floor((points[:, 1] - spec.origin_y) / spec.resolution).astype(np.int64)
+    z = pts[:, 2]
+    pts = pts[(z >= spec.z_min) & (z <= spec.z_max)]
+
+    ix = np.floor((pts[:, 0] - spec.origin_x) / spec.resolution).astype(np.int64)
+    iy = np.floor((pts[:, 1] - spec.origin_y) / spec.resolution).astype(np.int64)
 
     inside = (ix >= 0) & (ix < spec.width) & (iy >= 0) & (iy < spec.height)
     ix = ix[inside]
@@ -70,7 +71,7 @@ def inflate_grid(occupied: np.ndarray, spec: GridSpec) -> np.ndarray:
     offsets = []
     for dy in range(-dmax, dmax + 1):
         for dx in range(-dmax, dmax + 1):
-            dist = np.hyhot(dx, dy) * res
+            dist = np.hypot(dx, dy) * res
             if dist <= r + 1e-9:
                 offsets.append((dy,dx))
 
