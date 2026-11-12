@@ -68,7 +68,7 @@ def main():
         args=[]
         for device in devices:
             args+=['--device',str(device),'--group-add',str(device.stat().st_gid)]
-        if not devices:args=['--env','LIBGL_ALWAYS_SOFTWARE=1']
+        args+=['--env','LIBGL_ALWAYS_SOFTWARE=1']
     sys.stdout.buffer.write(b'\0'.join(x.encode() for x in args)+(b'\0' if args else b''))
 
 
